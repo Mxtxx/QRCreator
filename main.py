@@ -5,7 +5,7 @@ A simple GUI application that allows users to create customizable QR codes
 with options for colors, rounded corners, and logo overlay.
 """
 
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QFileDialog
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QFileDialog, QColorDialog
 from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtCore import Qt
 from qr import generate_qr_code
@@ -23,6 +23,8 @@ class QRCodeGenerator(QWidget):
         """Initialize the window and set up the UI."""
         super().__init__()
         self.current_qr_image = None #to store the current QR code image
+        self.fg_color = "#000000" #default foreground color
+        self.bg_color = "#FFFFFF" #default background color
         self.init_ui()
     
     def init_ui(self):
@@ -42,7 +44,15 @@ class QRCodeGenerator(QWidget):
         self.text_input.setPlaceholderText("Enter the text to convert to QR code")
         layout.addWidget(self.text_input)
 
-        
+        #create the foreground color picker button and connect it to the pick_fg_color method
+        self.fg_color_button = QPushButton("Pick Foreground Color")
+        self.fg_color_button.clicked.connect(self.choose_fg_color)
+        layout.addWidget(self.fg_color_button)
+
+        #create the background color picker button and connect it to the pick_bg_color method
+        self.bg_color_button = QPushButton("Pick Background Color")
+        self.bg_color_button.clicked.connect(self.choose_bg_color)
+        layout.addWidget(self.bg_color_button)
 
         #create the generate QR code button and connect it to the generate_qr_code method
         self.generate_button = QPushButton("Generate QR Code")
@@ -75,7 +85,7 @@ class QRCodeGenerator(QWidget):
             return
 
         #generate the QR code using the generate_qr_code function from the qr module
-        qr_image = generate_qr_code(text)
+        qr_image = generate_qr_code(text, self.fg_color, self.bg_color)
 
         #store the current QR code image
         self.current_qr_image = qr_image
@@ -110,6 +120,22 @@ class QRCodeGenerator(QWidget):
         
         #save the QR code image to the chosen file
         self.current_qr_image.save(file_path)
+
+    def choose_fg_color(self):
+        """
+        Open a color dialog to choose the foreground color for the QR code.
+        """
+        color = QColorDialog.getColor()
+        if color.isValid():
+            self.fg_color = color.name()
+
+    def choose_bg_color(self):
+        """
+        Open a color dialog to choose the background color for the QR code.
+        """
+        color = QColorDialog.getColor()
+        if color.isValid():
+            self.bg_color = color.name()
 
 
 
