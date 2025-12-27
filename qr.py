@@ -8,7 +8,7 @@ It uses the qrcode library to create QR code images and the PIL library to save 
 import qrcode
 from PIL import Image
 
-def generate_qr_code(text:str, fg_color:str = "#000000", bg_color:str = "#FFFFFF"):
+def generate_qr_code(text:str, fg_color:str = "#000000", bg_color:str = "#FFFFFF", error_level:str = "L"):
     """
     Generate a QR code image from the given text.
 
@@ -20,10 +20,19 @@ def generate_qr_code(text:str, fg_color:str = "#000000", bg_color:str = "#FFFFFF
     Returns:
         A PIL Image object containing the generated QR code.
     """
+
+    #map the error correction level to the qrcode constants
+    error_levels = {
+        "L": qrcode.constants.ERROR_CORRECT_L,
+        "M": qrcode.constants.ERROR_CORRECT_M,
+        "Q": qrcode.constants.ERROR_CORRECT_Q,
+        "H": qrcode.constants.ERROR_CORRECT_H,
+    }
+
     #create the default QR code object with default settings
     qr = qrcode.QRCode(
         version=1,
-        error_correction=qrcode.constants.ERROR_CORRECT_L, #low error correction level
+        error_correction=error_levels.get(error_level, qrcode.constants.ERROR_CORRECT_L),
         box_size=10,
         border=4,
     )

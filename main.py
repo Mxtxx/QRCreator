@@ -5,7 +5,7 @@ A simple GUI application that allows users to create customizable QR codes
 with options for colors, rounded corners, and logo overlay.
 """
 
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QFileDialog, QColorDialog
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QFileDialog, QColorDialog, QComboBox
 from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtCore import Qt
 from qr import generate_qr_code
@@ -25,6 +25,7 @@ class QRCodeGenerator(QWidget):
         self.current_qr_image = None #to store the current QR code image
         self.fg_color = "#000000" #default foreground color
         self.bg_color = "#FFFFFF" #default background color
+        self.error_correction = "L" #default error correction level
         self.init_ui()
     
     def init_ui(self):
@@ -53,6 +54,12 @@ class QRCodeGenerator(QWidget):
         self.bg_color_button = QPushButton("Pick Background Color")
         self.bg_color_button.clicked.connect(self.choose_bg_color)
         layout.addWidget(self.bg_color_button)
+
+        #create the error correction level dropdown
+        self.error_combo = QComboBox()
+        self.error_combo.addItems(["L - Low (7%)", "M - Medium (15%)", "Q - Quartile (25%)", "H - High (30%)"])
+        self.error_combo.currentTextChanged.connect(self.set_error_correction)
+        layout.addWidget(self.error_combo)
 
         #create the generate QR code button and connect it to the generate_qr_code method
         self.generate_button = QPushButton("Generate QR Code")
@@ -85,7 +92,7 @@ class QRCodeGenerator(QWidget):
             return
 
         #generate the QR code using the generate_qr_code function from the qr module
-        qr_image = generate_qr_code(text, self.fg_color, self.bg_color)
+        qr_image = generate_qr_code(text, self.fg_color, self.bg_color, self.error_correction)
 
         #store the current QR code image
         self.current_qr_image = qr_image
@@ -136,6 +143,14 @@ class QRCodeGenerator(QWidget):
         color = QColorDialog.getColor()
         if color.isValid():
             self.bg_color = color.name()
+    
+    def set_error_correction(self, text: str):
+        """
+        Set the error correction level for the QR code. 
+        Extracitng the first character of the text.
+        """
+        self.error_correction = text[0]
+
 
 
 
