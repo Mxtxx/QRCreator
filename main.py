@@ -5,7 +5,7 @@ A simple GUI application that allows users to create customizable QR codes
 with options for colors, rounded corners, and logo overlay.
 """
 
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QFileDialog, QColorDialog, QComboBox
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QFileDialog, QColorDialog, QComboBox, QSlider
 from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtCore import Qt
 from qr import generate_qr_code
@@ -26,6 +26,7 @@ class QRCodeGenerator(QWidget):
         self.fg_color = "#000000" #default foreground color
         self.bg_color = "#FFFFFF" #default background color
         self.error_correction = "L" #default error correction level
+        self.box_size = 10 #default box size
         self.init_ui()
     
     def init_ui(self):
@@ -61,6 +62,22 @@ class QRCodeGenerator(QWidget):
         self.error_combo.currentTextChanged.connect(self.set_error_correction)
         layout.addWidget(self.error_combo)
 
+        #size slider to adjust the box size of the QR code
+        size_layout = QHBoxLayout()
+        size_layout.addWidget(QLabel("Box Size"))
+
+        self.size_slider = QSlider(Qt.Horizontal)
+        self.size_slider.setMinimum(5)
+        self.size_slider.setMaximum(20)
+        self.size_slider.setValue(10)
+        self.size_slider.valueChanged.connect(self.set_size)
+        size_layout.addWidget(self.size_slider)
+
+        self.size_value_label = QLabel("10")
+        size_layout.addWidget(self.size_value_label)
+
+        layout.addLayout(size_layout)
+
         #create the generate QR code button and connect it to the generate_qr_code method
         self.generate_button = QPushButton("Generate QR Code")
         self.generate_button.clicked.connect(self.generate_qr)
@@ -92,7 +109,7 @@ class QRCodeGenerator(QWidget):
             return
 
         #generate the QR code using the generate_qr_code function from the qr module
-        qr_image = generate_qr_code(text, self.fg_color, self.bg_color, self.error_correction)
+        qr_image = generate_qr_code(text, self.fg_color, self.bg_color, self.error_correction, self.box_size)
 
         #store the current QR code image
         self.current_qr_image = qr_image
@@ -151,6 +168,12 @@ class QRCodeGenerator(QWidget):
         """
         self.error_correction = text[0]
 
+    def set_size(self, value: int):
+        """
+        Set the box size for the QR code.
+        """
+        self.box_size = value
+        self.size_value_label.setText(str(value))
 
 
 
