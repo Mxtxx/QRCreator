@@ -41,18 +41,48 @@ class QRCodeGenerator(QWidget):
         self.text_input.setPlaceholderText("Enter the text to convert to QR code")
         layout.addWidget(self.text_input)
 
-        self.setLayout(layout)
+        
 
-        #create the generate QR code button
+        #create the generate QR code button and connect it to the generate_qr_code method
         self.generate_button = QPushButton("Generate QR Code")
-        layout.addWidget(self.generate_button)
+        self.generate_button.clicked.connect(self.generate_qr_code)
+        layout.addWidget(self.generate_button) 
 
         #Preview the QR code
         self.preview_label = QLabel()
         self.preview_label.setAlignment(Qt.AlignCenter) 
         self.preview_label.setMinimumSize(300, 300)
         layout.addWidget(self.preview_label)
-        # UI components will be added here.
+        
+        self.setLayout(layout) #set the layout for the window
+
+    def generate_qr(self):
+        """
+        Generate the QR code from the text input field and display it in the preview label.
+    
+        Called when the generate button is clicked.
+        """
+        #get the text from the text input field and check if it is empty
+        text = self.text_input.text()
+        if not text:
+            return
+
+        #generate the QR code using the generate_qr_code function from the qr module
+        qr_image = generate_qr_code(text)
+
+        #convert the PIL image to a QPixmap for display in the preview label 
+        # since PySide 6 doesn't support PIL images directly
+        qr_image = qr_image.convert("RGBA")
+        data = qr_image.tobytes("raw", "RGBA")
+        qt_image = QImage(data, qr_image.width, qr_image.height, QImage.Format_RGBA8888)
+        pixmap = QPixmap.fromImage(qt_image)
+
+        #display the QR code in the preview label
+        self.preview_label.setPixmap(pixmap)
+        #save the QR code to a file
+        qr_image.save("qr_code.png")
+
+    
 
 def main():
     """Entry point of the application.
