@@ -5,7 +5,7 @@ A simple GUI application that allows users to create customizable QR codes
 with options for colors, rounded corners, and logo overlay.
 """
 
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QLineEdit, QPushButton, QLabel, QFileDialog
 from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtCore import Qt
 from qr import generate_qr_code
@@ -45,7 +45,7 @@ class QRCodeGenerator(QWidget):
 
         #create the generate QR code button and connect it to the generate_qr_code method
         self.generate_button = QPushButton("Generate QR Code")
-        self.generate_button.clicked.connect(self.generate_qr_code)
+        self.generate_button.clicked.connect(self.generate_qr)
         layout.addWidget(self.generate_button) 
 
         #Preview the QR code
@@ -54,7 +54,13 @@ class QRCodeGenerator(QWidget):
         self.preview_label.setMinimumSize(300, 300)
         layout.addWidget(self.preview_label)
         
-        self.setLayout(layout) #set the layout for the window
+        #set the layout for the window
+        self.setLayout(layout)
+
+        #add a save button to the window
+        self.save_button = QPushButton("Save QR Code")
+        self.save_button.clicked.connect(self.save_qr)
+        layout.addWidget(self.save_button)
 
     def generate_qr(self):
         """
@@ -79,8 +85,6 @@ class QRCodeGenerator(QWidget):
 
         #display the QR code in the preview label
         self.preview_label.setPixmap(pixmap)
-        #save the QR code to a file
-        qr_image.save("qr_code.png")
 
     
 
