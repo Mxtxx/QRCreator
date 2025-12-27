@@ -107,6 +107,9 @@ class QRCodeGenerator(QWidget):
         #if the user cancels the dialog, return
         if not file_path:
             return
+        
+        #save the QR code image to the chosen file
+        self.current_qr_image.save(file_path)
 
 
 
