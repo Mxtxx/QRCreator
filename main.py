@@ -22,6 +22,7 @@ class QRCodeGenerator(QWidget):
     def __init__(self):
         """Initialize the window and set up the UI."""
         super().__init__()
+        self.current_qr_image = None #to store the current QR code image
         self.init_ui()
     
     def init_ui(self):
@@ -76,6 +77,9 @@ class QRCodeGenerator(QWidget):
         #generate the QR code using the generate_qr_code function from the qr module
         qr_image = generate_qr_code(text)
 
+        #store the current QR code image
+        self.current_qr_image = qr_image
+
         #convert the PIL image to a QPixmap for display in the preview label 
         # since PySide 6 doesn't support PIL images directly
         qr_image = qr_image.convert("RGBA")
@@ -85,6 +89,26 @@ class QRCodeGenerator(QWidget):
 
         #display the QR code in the preview label
         self.preview_label.setPixmap(pixmap)
+
+    def save_qr(self):
+        """
+        Save the current QR code image to a file.
+
+        Opens a file dialog for the user to choose the save location and filename.
+        """
+
+        if self.current_qr_image is None:
+            return
+        
+        #open a file dialog for the user to choose the save location and filename
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Save QR Code", "qr_code.png", "PNG Files (*.png);;JPEG Files (*.jpg)")
+
+        #if the user cancels the dialog, return
+        if not file_path:
+            return
+
+
 
     
 
