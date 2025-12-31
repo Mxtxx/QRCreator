@@ -5,7 +5,7 @@ A simple GUI application that allows users to create customizable QR codes
 with options for colors, rounded corners, and logo overlay.
 """
 
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QFileDialog, QColorDialog, QComboBox, QSlider
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QFileDialog, QColorDialog, QComboBox, QSlider, QCheckBox
 from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtCore import Qt
 from qr import generate_qr_code
@@ -27,6 +27,7 @@ class QRCodeGenerator(QWidget):
         self.bg_color = "#FFFFFF" #default background color
         self.error_correction = "L" #default error correction level
         self.box_size = 10 #default box size
+        self.rounded = False #default no rounded corners
         self.init_ui()
     
     def init_ui(self):
@@ -78,6 +79,11 @@ class QRCodeGenerator(QWidget):
 
         layout.addLayout(size_layout)
 
+        #create the rounded corners checkbox and connect it to the set_rounded_corners method
+        self.rounded_checkbox = QCheckBox("Rounded Corners")
+        self.rounded_checkbox.stateChanged.connect(self.set_rounded)
+        layout.addWidget(self.rounded_checkbox)
+
         #create the generate QR code button and connect it to the generate_qr_code method
         self.generate_button = QPushButton("Generate QR Code")
         self.generate_button.clicked.connect(self.generate_qr)
@@ -109,7 +115,7 @@ class QRCodeGenerator(QWidget):
             return
 
         #generate the QR code using the generate_qr_code function from the qr module
-        qr_image = generate_qr_code(text, self.fg_color, self.bg_color, self.error_correction, self.box_size)
+        qr_image = generate_qr_code(text, self.fg_color, self.bg_color, self.error_correction, self.box_size, self.rounded)
 
         #store the current QR code image
         self.current_qr_image = qr_image
@@ -174,6 +180,12 @@ class QRCodeGenerator(QWidget):
         """
         self.box_size = value
         self.size_value_label.setText(str(value))
+    
+    def set_rounded(self,state:int):
+        """
+        Set the rounded corners for the QR code.
+        """
+        self.rounded = state == 2 #2 means checked, 0 means unchecked
 
 
 

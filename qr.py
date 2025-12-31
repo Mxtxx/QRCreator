@@ -71,7 +71,7 @@ def create_rounded_qr(qr, fg_color:str, bg_color:str, box_size:int):
     radius = box_size / 2
 
     #draw the rounded corners modules
-    for row_index in enumerate(matrix):
+    for row_index, row in enumerate(matrix):
         for col_index, isfilled in enumerate(row):
             if isfilled:
                 #calculate the position of the module
@@ -81,7 +81,7 @@ def create_rounded_qr(qr, fg_color:str, bg_color:str, box_size:int):
                 #draw the rounded corner module
                 draw.rounded_rectangle([x, y, x + box_size, y + box_size], radius, fill=fg_color)
     return image
-    
+
 
 
 
