@@ -37,7 +37,7 @@ python main.py
 3. Click "Generate QR Code" to preview
 4. Click "Save QR Code" to export
 
-**Note**: When using a logo, select Q (25%) or H (30%) error correction for best results.
+**Note**: When using a logo, select Q (25%) or H (30%) error correction.
 
 ## Author
 
