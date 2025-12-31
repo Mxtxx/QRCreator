@@ -115,10 +115,14 @@ class QRCodeGenerator(QWidget):
     
         Called when the generate button is clicked.
         """
-        #get the text from the text input field and check if it is empty
+        #get the text from the text input field and check if it is empty and warn user if it is
         text = self.text_input.text()
         if not text:
             QMessageBox.warning(self, "Empty Text", "Please enter some text or URLto generate a QR code.")
+            return
+        #warn user if logo is added and error correction is not high
+        if self.logo_path and self.error_correction != "H":
+            QMessageBox.warning(self, "Low Error Correction", "High error correction level is recommended when using a logo.")
             return
 
         #generate the QR code using the generate_qr_code function from the qr module
