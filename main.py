@@ -5,7 +5,7 @@ A simple GUI application that allows users to create customizable QR codes
 with options for colors, rounded corners, and logo overlay.
 """
 
-from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QFileDialog, QColorDialog, QComboBox, QSlider, QCheckBox
+from PySide6.QtWidgets import QApplication, QWidget, QVBoxLayout, QHBoxLayout, QLineEdit, QPushButton, QLabel, QFileDialog, QColorDialog, QComboBox, QSlider, QCheckBox, QMessageBox
 from PySide6.QtGui import QPixmap, QImage
 from PySide6.QtCore import Qt
 from qr import generate_qr_code
@@ -118,6 +118,7 @@ class QRCodeGenerator(QWidget):
         #get the text from the text input field and check if it is empty
         text = self.text_input.text()
         if not text:
+            QMessageBox.warning(self, "Empty Text", "Please enter some text or URLto generate a QR code.")
             return
 
         #generate the QR code using the generate_qr_code function from the qr module
