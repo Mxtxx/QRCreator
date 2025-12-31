@@ -28,6 +28,7 @@ class QRCodeGenerator(QWidget):
         self.error_correction = "L" #default error correction level
         self.box_size = 10 #default box size
         self.rounded = False #default no rounded corners
+        self.logo_path = None #path to the logo image
         self.init_ui()
     
     def init_ui(self):
@@ -84,6 +85,11 @@ class QRCodeGenerator(QWidget):
         self.rounded_checkbox.stateChanged.connect(self.set_rounded)
         layout.addWidget(self.rounded_checkbox)
 
+        #create the logo upload button and connect it to the upload_logo method
+        self.logo_button = QPushButton("Add Logo (optional)")
+        self.logo_button.clicked.connect(self.choose_logo)
+        layout.addWidget(self.logo_button)
+
         #create the generate QR code button and connect it to the generate_qr_code method
         self.generate_button = QPushButton("Generate QR Code")
         self.generate_button.clicked.connect(self.generate_qr)
@@ -115,7 +121,7 @@ class QRCodeGenerator(QWidget):
             return
 
         #generate the QR code using the generate_qr_code function from the qr module
-        qr_image = generate_qr_code(text, self.fg_color, self.bg_color, self.error_correction, self.box_size, self.rounded)
+        qr_image = generate_qr_code(text, self.fg_color, self.bg_color, self.error_correction, self.box_size, self.rounded, self.logo_path)
 
         #store the current QR code image
         self.current_qr_image = qr_image
@@ -186,6 +192,17 @@ class QRCodeGenerator(QWidget):
         Set the rounded corners for the QR code.
         """
         self.rounded = state == 2 #2 means checked, 0 means unchecked
+
+    def choose_logo(self):
+        """
+        Open a file dialog to choose the logo image.
+        """
+        file_path, _ = QFileDialog.getOpenFileName(self, "Select Logo Image", "", "Image Files (*.png;*.jpg;*.jpeg, *.bmp)")
+        if file_path:
+            self.logo_path = file_path
+
+            #Update button text to show the logo filename
+            self.logo_button.setText("Logo"+ file_path.split("/")[-1])
 
 
 

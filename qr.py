@@ -8,7 +8,7 @@ It uses the qrcode library to create QR code images and the PIL library to save 
 import qrcode
 from PIL import Image, ImageDraw
 
-def generate_qr_code(text:str, fg_color:str = "#000000", bg_color:str = "#FFFFFF", error_level:str = "L", box_size:int = 10, rounded:bool = False):
+def generate_qr_code(text:str, fg_color:str = "#000000", bg_color:str = "#FFFFFF", error_level:str = "L", box_size:int = 10, rounded:bool = False, logo_path:str = None):
     """
     Generate a QR code image from the given text.
 
@@ -16,7 +16,11 @@ def generate_qr_code(text:str, fg_color:str = "#000000", bg_color:str = "#FFFFFF
         text (str): The content to encode in the QR code (URL, text, etc.)
         fg_color (str): The color of the QR code (default is black)
         bg_color (str): The color of the QR code background (default is white)
-    
+        error_level (str): The error correction level for the QR code (default is L)
+        box_size (int): The size of the QR code modules (default is 10)
+        rounded (bool): Whether to create a rounded QR code (default is False)
+        logo_path (str): The path to the logo image (default is None)
+
     Returns:
         A PIL Image object containing the generated QR code.
     """
@@ -47,6 +51,11 @@ def generate_qr_code(text:str, fg_color:str = "#000000", bg_color:str = "#FFFFFF
         qr_image = create_rounded_qr(qr, fg_color, bg_color, box_size)
     else:
         qr_image = qr.make_image(fill_color=fg_color, back_color=bg_color)
+        qr_image = qr_image.convert("RGBA")
+
+    #add the logo to the QR code if a logo image is provided
+    if logo_path:
+        qr_image = add_logo(qr_image, logo_path)
     return qr_image
 
 def create_rounded_qr(qr, fg_color:str, bg_color:str, box_size:int):
@@ -81,6 +90,34 @@ def create_rounded_qr(qr, fg_color:str, bg_color:str, box_size:int):
                 #draw the rounded corner module
                 draw.rounded_rectangle([x, y, x + box_size, y + box_size], radius, fill=fg_color)
     return image
+
+def add_logo(qr_image, logo_path):
+    """
+    Add a logo image to the given QR code image.
+    """
+    logo = Image.open(logo_path)
+    if qr_image.mode != "RGBA":
+        qr_image = qr_image.convert("RGBA")
+
+    #calculate size of logo (max 1/4 of the QR code size for scannning)
+    qr_width, qr_height = qr_image.size
+    max_logo_size = qr_width // 4
+
+
+    #resize, center, and paste the logo onto the QR code (if logo is in RGBA mode, paste with transparency)
+    logo.thumbnail((max_logo_size, max_logo_size))
+
+    logo_x = (qr_width - max_logo_size) // 2
+    logo_y = (qr_height - max_logo_size) // 2
+
+
+    if logo.mode == "RGBA":
+        qr_image.paste(logo, (logo_x, logo_y), logo)
+    else:
+        qr_image.paste(logo, (logo_x, logo_y))
+    return qr_image
+
+
 
 
 
