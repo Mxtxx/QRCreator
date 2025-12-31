@@ -107,8 +107,8 @@ def add_logo(qr_image, logo_path):
     #resize, center, and paste the logo onto the QR code (if logo is in RGBA mode, paste with transparency)
     logo.thumbnail((max_logo_size, max_logo_size))
 
-    logo_x = (qr_width - max_logo_size) // 2
-    logo_y = (qr_height - max_logo_size) // 2
+    logo_x = (qr_width - logo.width) // 2
+    logo_y = (qr_height - logo.height) // 2
 
 
     if logo.mode == "RGBA":
